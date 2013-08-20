@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#---
 if ! streamripper --version >& /dev/null
 then
   zenity --error --text="<b>streamripper</b> ծրագիրը <i>հասանելի չէ</i>, <b>տեղադրեք</b> այն և կրկին փորձեք"
