@@ -22,7 +22,7 @@ if st=$(zenity --title "Ընտրեք ռարիոկայանը..." --list --radioli
 then
   if [ -z $st ]
   then
-    zenity --info --title "Հասցեն դատարկ է" --text "Դուք չեք ընտրեն որևէ կայան, ներբեռնում չի կատարվելու"
+    zenity --info --title "Հասցեն դատարկ է" --text "Դուք չեք ընտրել որևէ կայան, ներբեռնում չի կատարվելու"
     exit 2
   fi
   streamripper $st -q  | zenity --title 'Ներբեռնում է...' --info \
