@@ -53,3 +53,38 @@ file-text-subst () {
   find . -name $1 -exec sed -i 's,'"$2"','"$3"',' {} \;
 }
 
+_radio-goto-dir() {
+  xx=~/Downloads/radio/$(date)
+  mkdir -p "$xx"
+  cd "$xx"
+}
+
+radio-download-pirate-radio() {
+  pushd .
+  _radio-goto-dir
+  streamripper http://174.127.65.10:80 -a radio
+  popd
+}
+
+radio-download-polskastancia() {
+  pushd .
+  _radio-goto-dir
+#  streamripper http://91.121.249.18:80 -a radio
+  streamripper http://91.121.103.183:6200 -q
+  popd
+}
+
+radio-download-rock-only() {
+  pushd .
+  _radio-goto-dir
+  streamripper http://80.237.225.70:9480 -a radio
+  popd
+}
+
+#get-words։ քաշում է $1 հասցեից $2 սկսվող բառերի ցուցակը
+get-words () {
+  echo "[$2]"
+  wget -O- $1 | grep -w -o "\<[$2][ա-ֆԱ-Ֆ՞՜]\+" | sort -u
+}
+
+
