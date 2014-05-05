@@ -12,3 +12,5 @@ Different bash scripts
   * test.cgi - test CGI code
   * week.cgi - cgi call of 'date' command
   * words1.sh - bash/zenity based script to download file and create table using specific criteria
+  * orange-stat.sh - by operator usage statistics that takes Orange html report with detalization
+  
