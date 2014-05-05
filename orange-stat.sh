@@ -31,14 +31,14 @@ END {
       totno_cost+=cost[idx];
     }
     if(time[idx] == 0) continue;
-    printf("%40s՝ %g վ, %g դրամ (%g դրամ/րոպե)\n", idx, time[idx], cost[idx], 60*cost[idx]/time[idx]);
+    printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", idx, time[idx]/60, cost[idx], 60*cost[idx]/time[idx]);
   }
   if(total_time != 0)
   {
-    printf("%40s՝ %g վ, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը", total_time, total_cost, 60*total_cost/total_time);
+    printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը", total_time/60, total_cost, 60*total_cost/total_time);
     if(totno_time != 0)
     {
-      printf("%40s՝ %g վ, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը բացի Orange֊ից", totno_time, totno_cost, 60*totno_cost/totno_time);
+      printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը բացի Orange֊ից", totno_time/60, totno_cost, 60*totno_cost/totno_time);
     }
   }
 }'
