@@ -1,45 +1,51 @@
 #!/usr/bin/env bash
-awk 'BEGIN {
-  printf("Մուտք արեք tab բաժանիչով 7 սյունյականի աղյուսակ...\n") > "/dev/stderr";
-  FS="\t";
-}
-{
-  if($6 ~ /^[0-9]+$/)
-  {
-    name=$5;
-    if(name=="") name="Orange";
-    cost[name]+=$6;
-    sec = $4
-    gsub("\\:", " ", sec);
-    sec=mktime("0 0 0 "sec) - mktime("0 0 0 0 0 0");
-    time[name]+=sec;
+
+orange-stat() {
+  gawk 'BEGIN {
+    printf("Մուտք արեք tab բաժանիչով 7 սյունյականի աղյուսակ...\n") > "/dev/stderr";
+    FS="\t";
   }
-}
-END {
-  printf("*******************************************************************************\n") > "/dev/stderr";
-  total_time=0;
-  totno_time=0;
-  total_cost=0;
-  totno_cost=0;
-  for(idx in cost)
   {
-    total_time+=time[idx];
-    total_cost+=cost[idx];
-    if(idx != "Orange")
+    if($6 ~ /^[0-9]+$/ && $4 ~ /^[0-9]+:[0-9]+:[0-9]+$/)
     {
-      totno_time+=time[idx];
-      totno_cost+=cost[idx];
-    }
-    if(time[idx] == 0) continue;
-    printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", idx, time[idx]/60, cost[idx], 60*cost[idx]/time[idx]);
-  }
-  if(total_time != 0)
-  {
-    printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը", total_time/60, total_cost, 60*total_cost/total_time);
-    if(totno_time != 0)
-    {
-      printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը բացի Orange֊ից", totno_time/60, totno_cost, 60*totno_cost/totno_time);
+      name=$5;
+      if(name=="") name="Orange";
+      cost[name]+=$6;
+      sec = $4
+      gsub("\\:", " ", sec);
+      sec=mktime("0 0 0 "sec) - mktime("0 0 0 0 0 0");
+      time[name]+=sec;
     }
   }
-}'
+  END {
+    printf("*******************************************************************************\n") > "/dev/stderr";
+    total_time=0;
+    totno_time=0;
+    total_cost=0;
+    totno_cost=0;
+    for(idx in cost)
+    {
+      total_time+=time[idx];
+      total_cost+=cost[idx];
+      if(idx != "Orange")
+      {
+        totno_time+=time[idx];
+        totno_cost+=cost[idx];
+      }
+      if(time[idx] == 0) continue;
+      printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", idx, time[idx]/60, cost[idx], 60*cost[idx]/time[idx]);
+    }
+    if(total_time != 0)
+    {
+      printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը", total_time/60, total_cost, 60*total_cost/total_time);
+      if(totno_time != 0)
+      {
+        printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը բացի Orange֊ից", totno_time/60, totno_cost, 60*totno_cost/totno_time);
+      }
+    }
+  }'
+}
+
+orange-stat
+
 
