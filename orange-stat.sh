@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-orange-stat() {
+scan-table() {
   gawk 'BEGIN {
-    printf("Մուտք արեք tab բաժանիչով 7 սյունյականի աղյուսակ...\n") > "/dev/stderr";
     FS="\t";
   }
   {
@@ -18,7 +17,6 @@ orange-stat() {
     }
   }
   END {
-    printf("*******************************************************************************\n") > "/dev/stderr";
     total_time=0;
     totno_time=0;
     total_cost=0;
@@ -33,19 +31,25 @@ orange-stat() {
         totno_cost+=cost[idx];
       }
       if(time[idx] == 0) continue;
-      printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", idx, time[idx]/60, cost[idx], 60*cost[idx]/time[idx]);
-    }
-    if(total_time != 0)
-    {
-      printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը", total_time/60, total_cost, 60*total_cost/total_time);
-      if(totno_time != 0)
-      {
-        printf("%40s՝ %g րոպե, %g դրամ (%g դրամ/րոպե)\n", "Բոլորը բացի Orange֊ից", totno_time/60, totno_cost, 60*totno_cost/totno_time);
-      }
+      printf("%s\n%g\n%g\n%g\n", idx, time[idx]/60, cost[idx], cost[idx]*60/time[idx]);
     }
   }'
 }
 
-orange-stat
+process-data() {
+  local i=0
+  local arr
+  while read data
+  do
+    arr[$i]=$data
+    ((i++))
+  done
+  for((i=0; i<${#arr[@]}; i++))
+  do
+    echo ${arr[$i]}
+  done
+}
+
+scan-table | process-data
 
 
