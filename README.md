@@ -13,4 +13,5 @@ Different bash scripts
   * week.cgi - cgi call of 'date' command
   * words1.sh - bash/zenity based script to download file and create table using specific criteria
   * orange-stat.sh - by operator usage statistics that takes Orange html report with detalization
+  * rate.sh - gets currency rates from ACBA first page and prints as simple table
   
