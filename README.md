@@ -10,7 +10,7 @@ Different bash scripts
   * report-form.cgi - simple report management system form CGI
   * report-submit.cgi - simple report management system submit CGI
   * test.cgi - test CGI code
-  * week.cgi - cgi call of 'date' command
+  * week.cgi - get working week number: call of 'date +%V' command
   * words1.sh - bash/zenity based script to download file and create table using specific criteria
   * orange-stat.sh - by operator usage statistics that takes Orange html report with detalization
   * rate.sh - gets currency rates from ACBA first page and prints as simple table
