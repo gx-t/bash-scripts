@@ -13,5 +13,5 @@ Different bash scripts
   * week.cgi - get working week number: call of 'date +%V' command
   * words1.sh - bash/zenity based script to download file and create table using specific criteria
   * orange-stat.sh - by operator usage statistics that takes Orange html report with detalization
-  * rate.sh - gets currency rates from ACBA first page and prints as simple table
+  * rate.cgi - gets currency rates from ACBA first page and prints as simple table, displays table content if required argument is not specified
   * flac+cue-to-mp3.sh - converts single FLAC+CUE to multiple MP3s
