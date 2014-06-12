@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#Dependencies: identify, tr, zenity, sensible-browser
 ss=(`identify -format "%[exif:GPSLatitude] %[exif:GPSLatitudeRef] %[exif:GPSLongitude] %[exif:GPSLongitudeRef]" "$1" | tr "," " "`)
 if [ ${#ss[@]} != 8 ]
 then

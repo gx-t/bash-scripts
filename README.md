@@ -15,3 +15,4 @@ Different bash scripts
   * orange-stat.sh - by operator usage statistics that takes Orange html report with detalization
   * rate.cgi - gets currency rates from ACBA first page and prints as simple table, displays table content if required argument is not specified
   * flac+cue-to-mp3.sh - converts single FLAC+CUE to multiple MP3s
+  * jpeg-gps-maps.sh - takes exif GPS info from JPEG, opens google maps in default browser for that position. Dependency: ImageMagic identify, tr, zenity, sensible-browser
