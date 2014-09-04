@@ -25,22 +25,34 @@ make_table() {
 #դաս՝ + օր․ամիս․տարի
 # + 29.01.14
         ((${#line[@]} == 2 )) && [[ ${line[0]} == + ]] &&
-          printf "դաս\t%s-%s\t%s\t\"%s\"\t%s\t%s\t%d\n" ${dt[2]} ${dt[1]} ${dt[0]} "$name" $price $vp_month 0 &&
+          printf "%s-%s %s \"%s\" %s %s %d\n" ${dt[2]} ${dt[1]} ${dt[0]} "$name" $price $vp_month 0 &&
           continue
 #մուծում՝ գումար օր․ամիս․տարի
 # 5000 29.01.14
         ((${#line[@]} == 2 )) && [[ ${line[0]} != + ]] &&
-          printf "մուտք\t%s-%s\t%s\t\"%s\"\t%s\t%s\t%d\n" ${dt[2]} ${dt[1]} ${dt[0]} "$name" $price $vp_month ${line[0]} &&
+          printf "%s-%s %s \"%s\" %s %s %d\n" ${dt[2]} ${dt[1]} ${dt[0]} "$name" $price $vp_month ${line[0]} &&
           continue
 #դաս և մուծում՝ + օր․ամիս․տարի գումար
 # + 29.01.14 5000
         ((${#line[@]} == 3)) &&
-          printf "դաս\t%s-%s\t%s\t\"%s\"\t%s\t%s\t%d\n" ${dt[2]} ${dt[1]} ${dt[0]} "$name" $price $vp_month 0 &&
-          printf "մուտք\t%s-%s\t%s\t\"%s\"\t%s\t%s\t%d\n" ${dt[2]} ${dt[1]} ${dt[0]} "$name" $price $vp_month ${line[2]} &&
+          printf "%s-%s %s \"%s\" %s %s %d\n" ${dt[2]} ${dt[1]} ${dt[0]} "$name" $price $vp_month  ${line[2]}
           continue
       done
     }
   done
+}
+
+process() {
+  calc() {
+    echo "$3"
+  }
+  declare -A income_per_month
+  local line
+  while read line
+  do
+    calc $line 
+  done
+#    ((income_per_month[${line[0]}] += ${line[5]}))
 }
 
 
