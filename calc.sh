@@ -13,7 +13,7 @@ make_table() {
 #ֆայլի անունը ֊ ուսանողի անունն է
   while read name
   do
-    echo "$name ․․․" >&2
+#    echo "$name ․․․" >&2
     cat "$name" | {
       name=${name//\ /_}
 #առաջին երկու տողերը ֊ մեկ դասի գումարը և մեկ ակադեմիական ամսում պարապմունքների քանակն է
@@ -44,20 +44,27 @@ make_table() {
 }
 
 process() {
-  declare -A income_per_month
+  declare -A income
+  declare -A lessons
   declare -a line
   while read -a line
   do
-    ((income_per_month[${line[0]}] += ${line[5]}))
+    ((income[${line[0]}_${line[2]}] += ${line[5]}))
+    ((lessons[${line[0]}_${line[2]}] += ${line[3]}))
 #    echo ${line[2]}
   done
-  local idx_sorted=${!income_per_month[@]}
+  local idx_sorted=${!income[@]}
   idx_sorted=$(sort <<< "${idx_sorted// /$'\n'}")
   for idx in $idx_sorted
   do
-    echo "Մուտքերը ըստ ամիսների՝ $idx ... ${income_per_month[$idx]}"
+    local month=${idx:0:5}
+    local name=${idx:6}
+#    echo "m=$month, n=$name"
+    local diff
+    ((diff = ${income[$idx]} - ${lessons[$idx]}))
+    printf "$month, ${name/_/ }, Մուտքերը՝ ${income[$idx]}, Դասերը՝ ${lessons[$idx]}, Տարբերությունը՝ $diff\n"
   done
-#    ((income_per_month[${line[0]}] += ${line[5]}))
+#    ((income[${line[0]}] += ${line[5]}))
 }
 
 
