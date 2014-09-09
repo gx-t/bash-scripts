@@ -92,6 +92,57 @@ process() {
   echo "======================"
 }
 
-ls | make_table | sort -r | process > ../Հաշվետվություն.txt
-gedit ../Հաշվետվություն.txt &
+register_lesson() {
+  local name
+  read name
+  printf "+ $(date +%d.%m.%y)\n"
+#  echo "+ $(date +%d.%m.%y) `cat`"
+#  local name
+#  read name
+#  echo "+ $(date +%d.%m.%y)"
+}
+
+menu_student() {
+  echo
+  echo "Ընտրեք ուսանողին" >&2
+  echo "======================" >&2
+  local cnt=0
+  local line
+  ls -Q | while read line
+  do
+    ((cnt ++))
+    echo "$cnt. $line"  >&2
+  done
+  local ch
+  read ch
+  cnt=0;
+  ls -Q | while read line
+  do
+    ((cnt ++))
+#    [[ $cnt == $ch ]] && echo "$line" && return
+  done
+}
+
+menu_main() {
+  echo
+  echo "Որոշեք թե ինչ անել" >&2
+  echo "======================" >&2
+  echo "1. Դաս" >&2
+  echo "2. Մուծում" >&2
+  echo "3. Հաշվետվություն" >&2
+  echo "----------------------" >&2
+  echo "4. Նոր աշակերտ" >&2
+  echo "5. Հեռացնել աշակերտ" >&2
+  echo "6. Լրացնել ետին թվով" >&2
+  local ch
+  read ch
+  [[ $ch == 1 ]] && menu_student | register_lesson && return
+  [[ $ch == 2 ]] && menu_student && return
+  [[ $ch == 3 ]] && ls | make_table | sort -r | process | less && return
+}
+
+menu_main
+
+#ls | make_table | sort -r | process > ../Հաշվետվություն.txt
+#gedit ../Հաշվետվություն.txt &
 
