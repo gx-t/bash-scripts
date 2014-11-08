@@ -17,3 +17,5 @@ Different bash scripts
   * flac+cue-to-mp3.sh - converts single FLAC+CUE to multiple MP3s
   * jpeg-gps-maps.sh - takes exif GPS info from JPEG, opens google maps in default browser for that position. Dependency: ImageMagic identify, tr, zenity, sensible-browser
   * calc.sh - student income - lesson calculator
+  * conv-and-plot-rate.sh - convert collected currency rate information to png graph using gnuplot
+
