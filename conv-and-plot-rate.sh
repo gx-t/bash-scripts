@@ -36,3 +36,4 @@ set style data linespoints;
 plot '$ff' using 2:4 title 'Sell', '' using 2:5 title 'Buy', '' using 2:6 title 'CB'
 "
 rm "$ff"
+
