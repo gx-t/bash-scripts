@@ -4,7 +4,7 @@ printf "Connection: close\n\n"
 
 if [ $1 == $(cat rate-key) ]
 then
-  wget -q -O- acba.am | egrep -o '<td>[0-9.]+</td>' | egrep -o '[0-9.]+' | { read -d \n -a arr;echo "ACBA $(date) $(date +%s) ${arr[@]}"; } >> ~/data/rate.log
+  wget -q -O- acba.am | egrep -o '<td>[0-9.]+</td>' | egrep -o '[0-9.]+' | { read -d \n -a arr;echo "ACBA $(TZ=Asia/Yerevan date) $(TZ=Asia/Yerevan date +%s) ${arr[@]}"; } >> ~/data/rate.log
   echo OK
   exit 0
 fi
