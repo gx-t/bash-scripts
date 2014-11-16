@@ -28,7 +28,7 @@ set xlabel 'Time';
 set xtics rotate by -20;
 set xtics 604800;
 set ylabel 'Dram/USD';
-set yrange [404:416];
+set yrange [404:419];
 set title 'USD Exchange Rate';
 set key reverse Left outside;
 set grid;
