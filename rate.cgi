@@ -15,6 +15,69 @@ then
   exit 0
 fi
 
+if [[ $1 == "usd" ]]
+then
+  cat ~/data/rate.log |
+  awk '
+    BEGIN {
+    mon["Jan"]="01";
+    mon["Feb"]="02";
+    mon["Mar"]="03";
+    mon["Apr"]="04";
+    mon["May"]="05";
+    mon["Jun"]="06";
+    mon["Jul"]="07";
+    mon["Aug"]="08";
+    mon["Sep"]="09";
+    mon["Oct"]="10";
+    mon["Nov"]="11";
+    mon["Dec"]="12";
+    a = 0;
+    b = 0;
+    c = 0;
+  } {
+    if(a != $9 || b != $10 || c != $11) {
+      printf("%s %s/%s/%s %s %s %s %s\n", $2, $7, mon[$3], $4, $5, $9, $10, $11);
+      a = $9;
+      b = $10;
+      c = $11;
+    }
+  }'
+  exit 0
+fi
+
+if [[ $1 == "euro" ]]
+then
+  cat ~/data/rate.log |
+  awk '
+    BEGIN {
+    mon["Jan"]="01";
+    mon["Feb"]="02";
+    mon["Mar"]="03";
+    mon["Apr"]="04";
+    mon["May"]="05";
+    mon["Jun"]="06";
+    mon["Jul"]="07";
+    mon["Aug"]="08";
+    mon["Sep"]="09";
+    mon["Oct"]="10";
+    mon["Nov"]="11";
+    mon["Dec"]="12";
+    a = 0;
+    b = 0;
+    c = 0;
+  } {
+    if(a != $12 || b != $13 || c != $14) {
+      printf("%s %s/%s/%s %s %s %s %s\n", $2, $7, mon[$3], $4, $5, $12, $13, $14);
+      a = $12;
+      b = $13;
+      c = $14;
+    }
+  }'
+  exit 0
+fi
+
+
 if [ $1 == "upload-usd-png" ]
 then
   cat > ~/html/img/usd.png
