@@ -24,7 +24,8 @@ login() {
 	check-user-password || return
 	cd "inbox" && echo "OK" && ls | while read ff
 	do
-		echo "message $(stat -c %s $ff)"
+		echo "message"
+		ls -l $ff | awk '{print $5}'
 		cat "$ff"
 	done
 }
