@@ -1,6 +1,7 @@
 #!/bin/bash
 
 bs-start() {
+  (($# == 1)) && sleep $(time_to $1)
   echo $(date)
   ~/btsync/btsync --config ~/btsync/.conf
 }
@@ -33,7 +34,7 @@ bs-night() {
 }
 
 get-rates() {
-  wget -q -O- acba.am | egrep -o '<td>[0-9.]+</td>' | egrep -o '[0-9.]+' | { read -d \n -a arr;echo "ACBA $(date) $(date +%s) ${arr[@]}"; } >> ~/Documents/rate.log
+  wget -t 0 -q shah32768.sdf.org/cgi-bin/rate.cgi?zprtich -O-
 }
 
 tr-night() {
@@ -41,7 +42,7 @@ tr-night() {
   echo "Waiting for night time to start transmission-gtk..."
   sleep $(time_to "02:00")
   transmission-gtk &
-  get-rates
+#  get-rates
   echo "Waiting for morning to kill transmission-gtk..."
   sleep $(time_to "08:00")
   killall transmission-gtk
@@ -134,6 +135,17 @@ bat-cap() {
   echo "Curr Voltage: $vol V"
 }
 
+bat-info() {
+  echo "capacity:           $(cat /sys/class/power_supply/BAT0/capacity)"
+  echo "charge_full:        $(cat /sys/class/power_supply/BAT0/charge_full)"
+  echo "charge_full_design: $(cat /sys/class/power_supply/BAT0/charge_full_design)"
+  echo "charge_now:         $(cat /sys/class/power_supply/BAT0/charge_now)"
+  echo "current_now:        $(cat /sys/class/power_supply/BAT0/current_now)"
+  echo "status:             $(cat /sys/class/power_supply/BAT0/status)"
+  echo "voltage_min_design: $(cat /sys/class/power_supply/BAT0/voltage_min_design)"
+  echo "voltage_now:        $(cat /sys/class/power_supply/BAT0/voltage_now)"
+}
+
 convert-ocr() {
   if (($# != 2))
   then
@@ -160,4 +172,46 @@ convert-add-label() {
     "$2"
 }
 
+vu-download() {
+  local resp
+# url, start, minutes, output
+  sleep $(time_to "$2")
+  rm -f "$4"
+#  avconv -i "$1" -vcodec copy -acodec copy -t "$3" "$4"
+  resp=$(wget -b -t 0 -c "$1" -O "$4")
+  echo "$resp"
+  resp=${resp##*pid}
+  resp=${resp%%.*}
+  echo "Downloading $3 minutes..."
+  sleep $(expr 60 \* $3)
+  kill -SIGINT $resp
+}
+
+transfer() {
+  avconv -i "$1" -f matroska -s 1280x720 - | curl -v --upload-file - "https://transfer.sh/$2" >> /tmp/addr.txt
+}
+
+camera-jpegs-to-mkv() {
+  local src=/media/shah/disk/DCIM/*/*.JPG
+  local out=out.mkv
+  local size="1600x1200"
+  local dd=$(mktemp)
+  rm $dd
+  echo "Creating temporary folder $dd ..."
+  mkdir $dd || return
+  echo "Entering temporary folder $dd ..."
+  cd $dd
+  i=0
+  echo "Copying input files..."
+  ls -t $src | while read ff; do cp -v $ff $(printf "%08d.jpeg" $i); (( i ++ )); done
+  echo "Converting to movie..."
+  avconv -i "%08d.jpeg" -s "$size" "$out"
+  rm *.jpeg
+}
+
+camera-mp4-to-single-mkv() {
+  local src=/media/shah/disk/DCIM/*/*.MP4
+  local size="1280x720"
+  ls -t $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
+}
 
