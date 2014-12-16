@@ -2,7 +2,7 @@
 
 check-user-password() {
         local password
-        read uid && read password && cd 2> /dev/null "$uid" && [[ "$password" == $(cat ".password") ]] && return 0
+        read uid && read password && cd 2> /dev/null "$uid" && [[ "$password" == `cat ".password"` ]] && echo "$uid" && return 0
         echo "Authorization failed"
 	return 1
 }
@@ -21,19 +21,23 @@ register() {
 }
 
 login() {
-	check-user-password || return
-	cd "inbox" && echo "OK" && ls | while read ff
+	local uid
+	uid=`check-user-password` || return
+	cd "$uid/inbox" && echo "OK" && ls | while read ff
 	do
 		echo "message"
 		ls -l $ff | awk '{print $5}'
-		cat "$ff"
+		cat "$ff" && rm "$ff"
 	done
 }
 
 message() {
+	local uid
 	local dest
-	check-user-password || return
-	read dest && cd 2> /dev/null "../$dest" && cd "inbox" && cat > "msg-$(uuidgen)" && echo "OK" && return
+	local msg;
+	uid=`check-user-password` || return
+	msg="msg-$(uuidgen)"
+	read dest && cd "$dest/inbox" 2> /dev/null && tmp=`tempfile` && echo "$uid" > "$tmp" && cat >> "$tmp" && mv "$tmp" "$msg" && echo "OK" && return
 	echo "ERR"
 	echo "Error registering message. Invalid user id?"
 }
