@@ -212,6 +212,6 @@ camera-jpegs-to-mkv() {
 camera-mp4-to-single-mkv() {
   local src=/media/shah/disk/DCIM/*/*.MP4
   local size="1280x720"
-  ls -t $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
+  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
 }
 
