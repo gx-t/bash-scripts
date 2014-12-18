@@ -77,10 +77,15 @@ then
   exit 0
 fi
 
-
 if [ $1 == "upload-usd-png" ]
 then
   cat > ~/html/img/usd.png
+  exit 0
+fi
+
+if [ $1 == "upload-euro-png" ]
+then
+  cat > ~/html/img/euro.png
   exit 0
 fi
 
