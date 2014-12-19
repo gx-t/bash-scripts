@@ -27,7 +27,7 @@ plot '$ff' using 2:10 title 'Sell', '' using 2:11 title 'Buy', '' using 2:12 tit
 set title 'RUR Exchange Rate';
 set ylabel 'Dram/RUR';
 plot '$ff' using 2:13 title 'Sell', '' using 2:14 title 'Buy', '' using 2:15 title 'CB';
-unset multiplot;'
+unset multiplot;
 " | curl -s -X POST shah32768.sdf.org/cgi-bin/rate.cgi?upload-usd-png --upload-file "-" 
 rm "$ff" 
 
