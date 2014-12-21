@@ -193,25 +193,24 @@ transfer() {
 
 camera-jpegs-to-mkv() {
   local src=/media/shah/disk/DCIM/*/*.JPG
-  local out=out.mkv
+  local out="$(date).mkv"
   local size="1600x1200"
-  local dd=$(mktemp)
-  rm $dd
-  echo "Creating temporary folder $dd ..."
-  mkdir $dd || return
-  echo "Entering temporary folder $dd ..."
-  cd $dd
+  local tmpdir=$(mktemp)
+  rm $tmpdir
+  mkdir $tmpdir || return
   i=0
-  echo "Copying input files..."
-  ls -t $src | while read ff; do cp -v $ff $(printf "%08d.jpeg" $i); (( i ++ )); done
+  echo "Creating input files links..."
+  ls $src | while read ff; do ln -sf "$ff" "$tmpdir/$(printf '%08d.jpeg' $i)"; (( i ++ )); done
   echo "Converting to movie..."
-  avconv -i "%08d.jpeg" -s "$size" "$out"
-  rm *.jpeg
+  avconv -i "$tmpdir/%08d.jpeg" -s "$size" "$out"
+  popd
+  rm -rf "$tmpdir"
 }
 
 camera-mp4-to-single-mkv() {
   local src=/media/shah/disk/DCIM/*/*.MP4
   local size="1280x720"
-  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
+#  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
+  ls -tr $src | while read ff; do avconv -i "$ff" -vcodec rawvideo -r 120 -f avi -; done | avconv -i - "$(date).mkv"
 }
 

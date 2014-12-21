@@ -8,7 +8,6 @@ set terminal png size 4096,2048;
 set xdata time;
 set timefmt '%Y/%m/%d %H:%M:%S';
 set format x '%Y/%m/%d %H:%M:%S';
-set xlabel 'Time';
 set xtics rotate by -20;
 set xtics 604800;
 set key reverse Left outside;
