@@ -192,7 +192,7 @@ transfer() {
 }
 
 camera-jpegs-to-mkv() {
-  local src=/media/shah/disk/DCIM/*/*.JPG
+  local src=/ledia/shah/disk/DCIM/*/*.JPG
   local out="$(date).mkv"
   local size="1600x1200"
   local tmpdir=$(mktemp)
@@ -203,7 +203,6 @@ camera-jpegs-to-mkv() {
   ls $src | while read ff; do ln -sf "$ff" "$tmpdir/$(printf '%08d.jpeg' $i)"; (( i ++ )); done
   echo "Converting to movie..."
   avconv -i "$tmpdir/%08d.jpeg" -s "$size" "$out"
-  popd
   rm -rf "$tmpdir"
 }
 
@@ -213,4 +212,17 @@ camera-mp4-to-single-mkv() {
 #  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
   ls -tr $src | while read ff; do avconv -i "$ff" -vcodec rawvideo -r 120 -f avi -; done | avconv -i - "$(date).mkv"
 }
+
+vu-download-recorded-to-flash() {
+	dest=/media/shah/VERBATIM
+	vuurl=http://192.168.0.101
+	cd $dest &&
+	curl -s "$vuurl/web/movielist" | grep "<e2servicereference>1:0:0:0:0:0:0:0:0:0:" | while read line
+	do
+        	line=${line/<e2servicereference>1:0:0:0:0:0:0:0:0:0:/''}
+        	line=${line/<\/e2servicereference>/''}
+        	wget -t 0 -c "http://192.168.0.101/file?file=${line/<\/e2servicereference>/''}" -O - | avconv -y -i - -s 1280x720 "${line:11:-3}.mkv"
+	done
+}
+
 
