@@ -22,7 +22,7 @@ sync
 
 gnuplot -e "
 reset;
-set terminal png size 512,128;
+set terminal png size 4096,512;
 set xdata time;
 set timefmt '%Y/%m/%d %H:%M:%S';
 set format x '%Y/%m/%d %H:%M:%S';
