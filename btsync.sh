@@ -214,8 +214,9 @@ camera-mp4-to-single-mkv() {
 }
 
 vu-download-recorded-to-flash() {
-	dest=/media/shah/VERBATIM
-	vuurl=http://192.168.0.101
+	local dest=/media/shah/VERBATIM
+	local vuurl=http://192.168.0.101
+	local line
 	cd $dest &&
 	curl -s "$vuurl/web/movielist" | while read line
 	do
@@ -224,7 +225,41 @@ vu-download-recorded-to-flash() {
 	done
 }
 
+vu-get-epg-all() {
+	local vuurl=http://192.168.0.101
+	local line
+	local id
+	local sref
+	curl -s "$vuurl/web/getallservices" | while read line
+	do
+		[[ "$line" =~ ^\<e2servicereference\>(.+)\<\/e2servicereference\>$ ]] &&
+		curl -s "$vuurl/web/epgservice?sRef=${BASH_REMATCH[1]}" | while read line
+		do
+			[[ "$line" == \<e2event\> ]] && echo ================================================= && continue
+			[[ "$line" =~ ^\<e2eventtitle\>(.+)\<\/e2eventtitle\>$ ]] && echo "${BASH_REMATCH[1]}" && continue
+			[[ "$line" =~ ^\<e2eventservicename\>(.+)\<\/e2eventservicename\>$ ]] && echo "+++++ ${BASH_REMATCH[1]} +++++" && continue
+			[[ "$line" =~ ^\<e2eventdescription\>(.+)\<\/e2eventdescription\>$ ]] && echo "${BASH_REMATCH[1]}" && continue
+			[[ "$line" =~ ^\<e2eventstart\>(.+)\<\/e2eventstart\>$ ]] && date -d "@${BASH_REMATCH[1]}" && continue
+
+			[[ "$line" =~ ^\<e2eventid\>(.+)\<\/e2eventid\>$ ]] && id="${BASH_REMATCH[1]}" && continue
+			[[ "$line" =~ ^\<e2eventservicereference\>(.+)\<\/e2eventservicereference\>$ ]] && sref="${BASH_REMATCH[1]}" && continue
+			[[ "$line" == \<\/e2event\> ]] &&
+				echo "curl $vuurl/web/timeraddbyeventid?sRef=$sref&eventid=$id&dirname=/hdd/movie" && continue
+		done
+	done
+}
 #date -d @1419493800
 #curl -s "http://192.168.0.101/web/epgservice?sRef=1:0:19:2F49:C:70:1680000:0:0:0:"
 #curl http://192.168.0.101/web/getallservices
 #
+#	<e2event>
+#		<e2eventid>1997</e2eventid>
+#		<e2eventstart>1419809400</e2eventstart>
+#		<e2eventduration>3000</e2eventduration>
+#		<e2eventcurrenttime>1419504754</e2eventcurrenttime>
+#		<e2eventtitle>ДОМА НА ДЕРЕВЬЯХ:</e2eventtitle>
+#		<e2eventdescription> НАБЛЮДАТЕЛЬНЫЙ ПОСТ (12+)</e2eventdescription>
+#		<e2eventdescriptionextended></e2eventdescriptionextended>
+#		<e2eventservicereference>1:0:19:2F49:C:70:1680000:0:0:0:</e2eventservicereference>
+#		<e2eventservicename>Discovery Channel HD</e2eventservicename>
+#	</e2event>
