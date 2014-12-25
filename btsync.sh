@@ -147,29 +147,21 @@ bat-info() {
 }
 
 convert-ocr() {
-  if (($# != 2))
-  then
-    echo "Usage: $0 <infile> <outfile>"
-    return
-  fi
-  echo "processing $1 ..."
-  convert "$1" -verbose -morphology Convolve DoG:15,100,0 -negate -normalize -blur 0x1 -channel RBG -level 60%,91%,0.1 "$2"
+	(($# != 2)) && echo "Usage: $FUNCNAME <infile> <outfile>" && return
+	echo "processing $1 ..."
+	convert "$1" -verbose -morphology Convolve DoG:15,100,0 -negate -normalize -blur 0x1 -channel RBG -level 60%,91%,0.1 "$2"
 }
 
 convert-add-label() {
-  if [ "$#" -ne 3 ]; then
-    echo "Usage:"
-    echo "$0 infile outfile text"
-    return 1
-  fi
-  convert "$1" \
-    -auto-level \
-    -gravity south \
-    -font /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf \
-    -pointsize $(identify -format "%[fx:h/34]" "$1") \
-    -stroke '#000C' -strokewidth 2 -annotate 0 "$3" \
-    -stroke none -fill red -annotate 0 "$text" \
-    "$2"
+	(($# != 3)) && echo "Usage: $FUNCNAME infile outfile text" && return 1
+	convert "$1" \
+		-auto-level \
+		-gravity south \
+		-font /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf \
+		-pointsize $(identify -format "%[fx:h/34]" "$1") \
+		-stroke '#000C' -strokewidth 2 -annotate 0 "$3" \
+		-stroke none -fill red -annotate 0 "$text" \
+		"$2"
 }
 
 vu-download() {
