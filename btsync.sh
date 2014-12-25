@@ -217,12 +217,14 @@ vu-download-recorded-to-flash() {
 	dest=/media/shah/VERBATIM
 	vuurl=http://192.168.0.101
 	cd $dest &&
-	curl -s "$vuurl/web/movielist" | grep "<e2servicereference>1:0:0:0:0:0:0:0:0:0:" | while read line
+	curl -s "$vuurl/web/movielist" | while read line
 	do
-        	line=${line/<e2servicereference>1:0:0:0:0:0:0:0:0:0:/''}
-        	line=${line/<\/e2servicereference>/''}
-        	wget -t 0 -c "http://192.168.0.101/file?file=${line/<\/e2servicereference>/''}" -O - | avconv -y -i - -s 1280x720 "${line:11:-3}.mkv"
+		[[ "$line" =~ ^\<e2servicereference\>1:0:0:0:0:0:0:0:0:0:(.+)\<\/e2servicereference\>$ ]] &&
+		(wget -t 0 -c "$vuurl/file?file=${BASH_REMATCH[1]}" -O - | avconv -y -i - -s 1280x720 "${BASH_REMATCH[1]:11:-3}.mkv" || return)
 	done
 }
 
-
+#date -d @1419493800
+#curl -s "http://192.168.0.101/web/epgservice?sRef=1:0:19:2F49:C:70:1680000:0:0:0:"
+#curl http://192.168.0.101/web/getallservices
+#
