@@ -236,7 +236,7 @@ vu-get-epg-all() {
 			[[ "$line" =~ ^\<e2eventid\>(.+)\<\/e2eventid\>$ ]] && id="${BASH_REMATCH[1]}" && continue
 			[[ "$line" =~ ^\<e2eventservicereference\>(.+)\<\/e2eventservicereference\>$ ]] && sref="${BASH_REMATCH[1]}" && continue
 			[[ "$line" == \<\/e2event\> ]] &&
-				echo "curl $vuurl/web/timeraddbyeventid?sRef=$sref&eventid=$id&dirname=/hdd/movie" && continue
+			echo "curl $vuurl/web/timeraddbyeventid?sRef=$sref&eventid=$id&dirname=/hdd/movie" && continue
 		done
 	done
 }
