@@ -240,3 +240,43 @@ vu-get-epg-all() {
 		done
 	done
 }
+
+vu-movie-list-upload() {
+	cmdurl="http://192.168.0.101/web/movielist"
+	( echo "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
+<title>Պահպանված հաղորդումները</title>
+<style>
+table, th, td {
+	border: 1px solid blue;
+}
+</style>
+</head>
+<body>
+<h2>Պահպանված հազորդումների ցանկը ($(date))</h2>
+<table>
+<tr>
+<td><b>Ալիքը</b></td>
+<td><b>Տևողությունը</b></td>
+<td><b>Անվանումը/նկարագրությունը</b></td>
+</tr>
+"
+
+	curl -s "$cmdurl" | while read line
+	do
+		[[ "$line" == "<e2movie>" ]] && echo "<tr>" && continue
+		[[ "$line" == "</e2movie>" ]] && echo "<td>$svcname</td>" && echo "<td>$length</td>" && echo "<td>$title</td>" && echo "</tr>" && continue
+		[[ "$line" =~ ^\<e2servicename\>(.+)\<\/e2servicename\>$ ]] && svcname="${BASH_REMATCH[1]}" && continue
+		[[ "$line" =~ ^\<e2title\>(.+)\<\/e2title\>$ ]] && title=${BASH_REMATCH[1]} && continue
+		[[ "$line" =~ ^\<e2description\>(.+)\<\/e2description\>$ ]] && title="$title${BASH_REMATCH[1]}" && continue
+		[[ "$line" =~ ^\<e2length\>(.+)\<\/e2length\>$ ]] && length=${BASH_REMATCH[1]} && continue
+	done
+
+	echo "
+</table>
+</body>
+</html>
+" ) |  curl --upload-file - "http://shah32768.sdf.org/cgi-bin/vu-upload.cgi?33462e45-2031-4dab-a821-1e7cac6a7d3d" 
+}
