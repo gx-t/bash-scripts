@@ -240,18 +240,3 @@ vu-get-epg-all() {
 		done
 	done
 }
-#date -d @1419493800
-#curl -s "http://192.168.0.101/web/epgservice?sRef=1:0:19:2F49:C:70:1680000:0:0:0:"
-#curl http://192.168.0.101/web/getallservices
-#
-#	<e2event>
-#		<e2eventid>1997</e2eventid>
-#		<e2eventstart>1419809400</e2eventstart>
-#		<e2eventduration>3000</e2eventduration>
-#		<e2eventcurrenttime>1419504754</e2eventcurrenttime>
-#		<e2eventtitle>ДОМА НА ДЕРЕВЬЯХ:</e2eventtitle>
-#		<e2eventdescription> НАБЛЮДАТЕЛЬНЫЙ ПОСТ (12+)</e2eventdescription>
-#		<e2eventdescriptionextended></e2eventdescriptionextended>
-#		<e2eventservicereference>1:0:19:2F49:C:70:1680000:0:0:0:</e2eventservicereference>
-#		<e2eventservicename>Discovery Channel HD</e2eventservicename>
-#	</e2event>
