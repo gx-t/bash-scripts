@@ -184,7 +184,7 @@ transfer() {
 }
 
 camera-jpegs-to-mkv() {
-  local src=/ledia/shah/disk/DCIM/*/*.JPG
+  local src=/media/shah/disk/DCIM/*/*.JPG
   local out="$(date).mkv"
   local size="1600x1200"
   local tmpdir=$(mktemp)
