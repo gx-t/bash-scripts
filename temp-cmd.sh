@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ff=$(tempfile)
-curl -s http://shah32768.sdf.org/cgi-bin/temp.cgi?raw |
+curl -s http://shah32768.sdf.org/cgi-bin/temp.cgi?raw-gzip | gzip -d |
 awk '
 	BEGIN {
 	mon["Jan"]="01";
