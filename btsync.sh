@@ -218,27 +218,36 @@ vu-download-recorded-to-flash() {
 }
 
 vu-get-epg-all() {
-	local vuurl=http://192.168.0.101
+	local vuurl=http://192.168.0.103
 	local line
+	local title
+	local descr
 	local id
 	local sref
-	curl -s "$vuurl/web/getallservices" | while read line
+	local time
+	local svcname
+	local length
+	dbfile="/tmp/vu-epg.db"
+	rm -f "$dbfile"
+	(echo "create table epgall (id INTEGER PRIMARY KEY,svcname TEXT, title TEXT, descr TEXT, length TEXT, time TIMESTAMP, sref TEXT);" &&
+	echo "begin transaction;"
+	curl -s "$vuurl/web/getallservices" |  while read line
 	do
 		[[ "$line" =~ ^\<e2servicereference\>(.+)\<\/e2servicereference\>$ ]] &&
-		curl -s "$vuurl/web/epgservice?sRef=${BASH_REMATCH[1]}" | while read line
+		curl -s "$vuurl/web/epgservice?sRef=${BASH_REMATCH[1]}" | tr \" \' | while read line
 		do
-			[[ "$line" == \<e2event\> ]] && echo ================================================= && continue
-			[[ "$line" =~ ^\<e2eventtitle\>(.+)\<\/e2eventtitle\>$ ]] && echo "${BASH_REMATCH[1]}" && continue
-			[[ "$line" =~ ^\<e2eventservicename\>(.+)\<\/e2eventservicename\>$ ]] && echo "+++++ ${BASH_REMATCH[1]} +++++" && continue
-			[[ "$line" =~ ^\<e2eventdescription\>(.+)\<\/e2eventdescription\>$ ]] && echo "${BASH_REMATCH[1]}" && continue
-			[[ "$line" =~ ^\<e2eventstart\>(.+)\<\/e2eventstart\>$ ]] && date -d "@${BASH_REMATCH[1]}" && continue
+			[[ "$line" == \<e2event\> ]] && title="" && descr="" && id="" && sref="" && date="" && svcname="" && length=0 && continue
+			[[ "$line" =~ ^\<e2eventtitle\>(.+)\<\/e2eventtitle\>$ ]] && title="${BASH_REMATCH[1]}" && continue
+			[[ "$line" =~ ^\<e2eventservicename\>(.+)\<\/e2eventservicename\>$ ]] && svcname="${BASH_REMATCH[1]}" && continue
+			[[ "$line" =~ ^\<e2eventdescription\>(.+)\<\/e2eventdescription\>$ ]] && descr="${BASH_REMATCH[1]}" && continue
+			[[ "$line" =~ ^\<e2eventstart\>(.+)\<\/e2eventstart\>$ ]] && time=$(date -d "@${BASH_REMATCH[1]}" +%Y-%m-%d\ %H:%M:%S) && continue
+			[[ "$line" =~ ^\<e2eventduration\>(.+)\<\/e2eventduration\>$ ]] && length="${BASH_REMATCH[1]}" && continue
 
 			[[ "$line" =~ ^\<e2eventid\>(.+)\<\/e2eventid\>$ ]] && id="${BASH_REMATCH[1]}" && continue
 			[[ "$line" =~ ^\<e2eventservicereference\>(.+)\<\/e2eventservicereference\>$ ]] && sref="${BASH_REMATCH[1]}" && continue
-			[[ "$line" == \<\/e2event\> ]] &&
-			echo "curl $vuurl/web/timeraddbyeventid?sRef=$sref&eventid=$id&dirname=/hdd/movie" && continue
+			[[ "$line" == \<\/e2event\> ]] && echo "insert into epgall (svcname,title,descr,length,time,sref) values (\"$svcname\",\"$title\",\"$descr\",\"$length\",\"$time\",\"$sref\");" && continue
 		done
-	done
+	done; echo "end transaction;") | sqlite3 "$dbfile"
 }
 
 vu-movie-list-upload() {
