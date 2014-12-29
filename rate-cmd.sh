@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ff=$(tempfile)
-curl -s shah32768.sdf.org/cgi-bin/rate.cgi?zprtich > /dev/null &&  curl -s shah32768.sdf.org/cgi-bin/rate.cgi?usd-euro-lari-rur > "$ff" 
+curl -s shah32768.sdf.org/cgi-bin/rate.cgi?zprtich > /dev/null &&  curl -s shah32768.sdf.org/cgi-bin/rate.cgi?usd-euro-lari-rur-gzip | gzip -d > "$ff" 
 sync 
 gnuplot -e "
 reset;
