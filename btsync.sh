@@ -207,7 +207,7 @@ camera-mp4-to-single-mkv() {
 
 vu-download-recorded-to-flash() {
 	local dest=/media/shah/VERBATIM
-	local vuurl=http://192.168.0.101
+	local vuurl=http://192.168.0.103
 	local line
 	cd $dest &&
 	curl -s "$vuurl/web/movielist" | while read line
@@ -242,7 +242,7 @@ vu-get-epg-all() {
 }
 
 vu-movie-list-upload() {
-	cmdurl="http://192.168.0.101/web/movielist"
+	cmdurl="http://192.168.0.103/web/movielist"
 	( echo "<!DOCTYPE html>
 <html>
 <head>
@@ -278,5 +278,7 @@ table, th, td {
 </table>
 </body>
 </html>
-" ) |  curl --upload-file - "http://shah32768.sdf.org/cgi-bin/vu-upload.cgi?33462e45-2031-4dab-a821-1e7cac6a7d3d" 
+" ) | gzip | curl --upload-file - "http://shah32768.sdf.org/cgi-bin/vu-upload.cgi?33462e45-2031-4dab-a821-1e7cac6a7d3d" 
 }
+
+

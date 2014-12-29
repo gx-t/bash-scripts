@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-printf "Content-type: text/plain\n"
-printf "Connection: close\n\n"
+echo "Content-type: application/x-binary
+Connection: close
+"
 
 if [ $1 == $(cat rate-key) ]
 then
@@ -9,14 +10,11 @@ then
   exit 0
 fi
 
-if [ $1 == "raw" ]
-then
-  cat ~/data/rate.log
-  exit 0
-fi
+[[ $1 == "raw" ]] && cat ~/data/rate.log && exit 0
 
-if [[ $1 == "usd" ]]
-then
+[[ $1 == "raw-gzip" ]] && gzip -9 -c ~/data/rate.log && exit 0 
+
+[[ $1 == "usd" ]] &&
   cat ~/data/rate.log |
   awk '
     BEGIN {
@@ -42,12 +40,37 @@ then
       b = $10;
       c = $11;
     }
-  }'
-  exit 0
-fi
+  }' && exit 0
 
-if [[ $1 == "usd-euro-lari-rur" ]]
-then
+[[ $1 == "usd-gzip" ]] &&
+  cat ~/data/rate.log |
+  awk '
+    BEGIN {
+    mon["Jan"]="01";
+    mon["Feb"]="02";
+    mon["Mar"]="03";
+    mon["Apr"]="04";
+    mon["May"]="05";
+    mon["Jun"]="06";
+    mon["Jul"]="07";
+    mon["Aug"]="08";
+    mon["Sep"]="09";
+    mon["Oct"]="10";
+    mon["Nov"]="11";
+    mon["Dec"]="12";
+    a = 0;
+    b = 0;
+    c = 0;
+  } {
+    if(a != $9 || b != $10 || c != $11) {
+      printf("%s %s/%s/%s %s %s %s %s\n", $2, $7, mon[$3], $4, $5, $9, $10, $11);
+      a = $9;
+      b = $10;
+      c = $11;
+    }
+  }' | gzip -9 && exit 0
+
+[[ $1 == "usd-euro-lari-rur" ]] &&
   cat ~/data/rate.log |
   awk '
     BEGIN {
@@ -90,21 +113,56 @@ then
       k = $16;
       l = $17;
     }
-  }'
-  exit 0
-fi
+  }' && exit 0
 
-if [ $1 == "upload-usd-png" ]
-then
-  cat > ~/html/img/usd.png
-  exit 0
-fi
+[[ $1 == "usd-euro-lari-rur-gzip" ]] &&
+  cat ~/data/rate.log |
+  awk '
+    BEGIN {
+    mon["Jan"]="01";
+    mon["Feb"]="02";
+    mon["Mar"]="03";
+    mon["Apr"]="04";
+    mon["May"]="05";
+    mon["Jun"]="06";
+    mon["Jul"]="07";
+    mon["Aug"]="08";
+    mon["Sep"]="09";
+    mon["Oct"]="10";
+    mon["Nov"]="11";
+    mon["Dec"]="12";
+    a = 0;
+    b = 0;
+    c = 0;
+    d = 0;
+    e = 0;
+    f = 0;
+    h = 0;
+    i = 0;
+    j = 0;
+    k = 0;
+    l = 0;
+  } {
+    if(a != $9 || b != $10 || c != $11 || d != $12 || e != $13 || f != $14 || g != $24 || h != $25 || i != $26 || j != $15 || k != $16 || l != $17) {
+      printf("%s %s/%s/%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n", $2, $7, mon[$3], $4, $5, $9, $10, $11, $12, $13, $14, $24, $25, $26, $15, $16, $17);
+      a = $9;
+      b = $10;
+      c = $11;
+      d = $12;
+      e = $13;
+      f = $14;
+      g = $24;
+      h = $25;
+      i = $26;
+      j = $15;
+      k = $16;
+      l = $17;
+    }
+  }' | gzip -9 && exit 0
 
-if [ $1 == "upload-euro-png" ]
-then
-  cat > ~/html/img/euro.png
-  exit 0
-fi
+[[ $1 == "upload-usd-png" ]] && cat > ~/html/img/usd.png && exit 0
+
+[[ $1 == "upload-euro-png" ]] && cat > ~/html/img/euro.png && exit 0
 
 date
 echo "===================================="
