@@ -229,8 +229,8 @@ vu-get-epg-all() {
 	local length
 	dbfile="/tmp/vu-epg.db"
 	rm -f "$dbfile"
-	(echo "create table epgall (id INTEGER PRIMARY KEY,svcname TEXT, title TEXT, descr TEXT, length TEXT, time TIMESTAMP, sref TEXT);" &&
-	echo "begin transaction;"
+	(echo "create table epgall (id INTEGER PRIMARY KEY,svcname TEXT, title TEXT, descr TEXT, length TEXT, time TIMESTAMP, sref TEXT);
+begin transaction;"
 	curl -s "$vuurl/web/getallservices" |  while read line
 	do
 		[[ "$line" =~ ^\<e2servicereference\>(.+)\<\/e2servicereference\>$ ]] &&
