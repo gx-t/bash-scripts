@@ -1,20 +1,28 @@
 #!/usr/bin/env bash
-echo "Content-type: application/x-binary
+
+hd1="Content-type: text/plain; charset=us-ascii
 Connection: close
 "
+
+hd2="Content-type: application/gzip; charset=binary
+Connection: close
+"
+
 
 if [ $1 == $(cat rate-key) ]
 then
   wget -q -t 0 -O- acba.am | egrep -o '<td>[0-9.]+</td>' | egrep -o '[0-9.]+' | { read -d \n -a arr;[ ${#arr[@]} -gt 0 ] && echo "ACBA $(TZ=Asia/Yerevan date) $(TZ=Asia/Yerevan date +%s) ${arr[@]}"; } >> ~/data/rate.log
+  echo "$hd1"
   echo OK
   exit 0
 fi
 
-[[ $1 == "raw" ]] && cat ~/data/rate.log && exit 0
+[[ $1 == "raw" ]] && echo "$hd1" && cat ~/data/rate.log && exit 0
 
-[[ $1 == "raw-gzip" ]] && gzip -9 -c ~/data/rate.log && exit 0 
+[[ $1 == "raw-gzip" ]] && echo "$hd2" && gzip -9 -c ~/data/rate.log && exit 0 
 
 [[ $1 == "usd" ]] &&
+  echo "$hd1" &&
   cat ~/data/rate.log |
   awk '
     BEGIN {
@@ -43,6 +51,7 @@ fi
   }' && exit 0
 
 [[ $1 == "usd-gzip" ]] &&
+  echo "$hd2" &&
   cat ~/data/rate.log |
   awk '
     BEGIN {
@@ -71,6 +80,7 @@ fi
   }' | gzip -9 && exit 0
 
 [[ $1 == "usd-euro-lari-rur" ]] &&
+  echo "$hd1" &&
   cat ~/data/rate.log |
   awk '
     BEGIN {
@@ -116,6 +126,7 @@ fi
   }' && exit 0
 
 [[ $1 == "usd-euro-lari-rur-gzip" ]] &&
+  echo "$hd2" &&
   cat ~/data/rate.log |
   awk '
     BEGIN {
@@ -160,10 +171,11 @@ fi
     }
   }' | gzip -9 && exit 0
 
-[[ $1 == "upload-usd-png" ]] && cat > ~/html/img/usd.png && exit 0
+[[ $1 == "upload-usd-png" ]] && echo "$hd1" && cat > ~/html/img/usd.png && exit 0
 
-[[ $1 == "upload-euro-png" ]] && cat > ~/html/img/euro.png && exit 0
+[[ $1 == "upload-euro-png" ]] && echo "$hd1" && cat > ~/html/img/euro.png && exit 0
 
+echo "$hd1" &&
 date
 echo "===================================="
 echo "USD             ACBA    ACBA   CBA"
