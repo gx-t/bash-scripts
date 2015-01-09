@@ -183,9 +183,9 @@ transfer() {
   avconv -i "$1" -f matroska -s 1280x720 - | curl -v --upload-file - "https://transfer.sh/$2" >> /tmp/addr.txt
 }
 
-camera-jpegs-to-mkv() {
+camera-jpegs-to-ts() {
   local src=/media/shah/disk/DCIM/*/*.JPG
-  local out="$(date).mkv"
+  local out="$(date).ts"
   local size="1600x1200"
   local tmpdir=$(mktemp)
   rm $tmpdir
@@ -194,27 +194,24 @@ camera-jpegs-to-mkv() {
   echo "Creating input files links..."
   ls $src | while read ff; do ln -sf "$ff" "$tmpdir/$(printf '%08d.jpeg' $i)"; (( i ++ )); done
   echo "Converting to movie..."
-  avconv -i "$tmpdir/%08d.jpeg" -s "$size" "$out"
+  avconv -i "$tmpdir/%08d.jpeg" -s "$size" -c:v libx264 "$out"
   rm -rf "$tmpdir"
 }
 
 camera-mp4-to-single-mkv() {
   local src=/media/shah/disk/DCIM/*/*.MP4
   local size="1280x720"
-#  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
-  ls -tr $src | while read ff; do avconv -i "$ff" -vcodec rawvideo -r 120 -f avi -; done | avconv -i - "$(date).mkv"
+  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
+#  ls -tr $src | while read ff; do avconv -i "$ff" -vcodec rawvideo -r 120 -f avi -; done | avconv -i - "$(date).mkv"
 }
 
-vu-download-recorded-to-flash() {
-	local dest=/media/shah/VERBATIM
-	local vuurl=http://192.168.0.103
+vu-download-recorded-script() {
+	local vuurl=http://192.168.0.113
 	local line
-	cd $dest &&
+	local i=0
 	curl -s "$vuurl/web/movielist" | while read line
-	do
-		[[ "$line" =~ ^\<e2servicereference\>1:0:0:0:0:0:0:0:0:0:(.+)\<\/e2servicereference\>$ ]] &&
-		(wget -t 0 -c "$vuurl/file?file=${BASH_REMATCH[1]}" -O - | avconv -y -i - -s 1280x720 "${BASH_REMATCH[1]:11:-3}.mkv" || return)
-	done
+	do [[ "$line" =~ ^\<e2servicereference\>[10\:]+(.+)\<\/e2servicereference\>$ ]] &&
+	echo "wget -t 0 -c \"$vuurl/file?file=${BASH_REMATCH[1]}\" -O - | avconv -i - -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y \"${BASH_REMATCH[1]:11}\" &"; done
 }
 
 vu-get-epg-all() {
@@ -288,6 +285,14 @@ table, th, td {
 </body>
 </html>
 " ) | gzip | curl --upload-file - "http://shah32768.sdf.org/cgi-bin/vu-upload.cgi?33462e45-2031-4dab-a821-1e7cac6a7d3d" 
+}
+
+vu-download-hd() {
+  avconv -i "$1" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "$2"
+}
+
+vu-download-sd() {
+  avconv -i "$1" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "$2"
 }
 
 
