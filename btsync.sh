@@ -214,8 +214,19 @@ vu-download-recorded-script() {
 	echo "wget -t 0 -c \"$vuurl/file?file=${BASH_REMATCH[1]}\" -O - | avconv -i - -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y \"${BASH_REMATCH[1]:11}\" &"; done
 }
 
+vu-nfs-recorded-script() {
+	local line
+	local i=0
+	ls -r ../*.ts | while read line
+	do
+		local sflag=""
+		[[ "$line" =~ .+" HD ".+ ]] && sflag=" -s 1280x720"
+		echo "avconv -i \"$line\"$sflag -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y \"$(basename "$line")\""
+	done
+}
+
 vu-get-epg-all() {
-	local vuurl=http://192.168.0.103
+	local vuurl=http://192.168.0.113
 	local line
 	local title
 	local descr
@@ -296,3 +307,48 @@ vu-download-sd() {
 }
 
 
+################################################################################
+vu-power-status() {
+	curl http://192.168.0.113/web/powerstate
+}
+################################################################################
+
+vu-discovery-hd() {
+	avconv -i "http://192.168.0.113:8001/1:0:19:2F49:C:70:1680000:0:0:0:" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Discovery-HD-$(date).ts"
+}
+
+vu-kino-hd() {
+	avconv -i "http://192.168.0.113:8001/1:0:19:2F45:C:70:1680000:0:0:0:" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -y "Kino-HD-$(date).ts"
+}
+
+vu-amedia-hd() {
+	avconv -i "http://192.168.0.113:8001/1:0:19:6593:9:70:1680000:0:0:0:" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Amedia-HD-$(date).ts"
+}
+
+vu-ng-hd() {
+	avconv -i "http://192.168.0.113:8001/1:0:19:6592:9:70:1680000:0:0:0:" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "NG-HD-$(date).ts"
+}
+
+vu-discovery-science() {
+	avconv -i "http://192.168.0.113:8001/1:0:1:5088:6:70:1680000:0:0:0:" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Discovery-Science-$(date).ts"
+}
+
+vu-jim-jam() {
+	avconv -i "http://192.168.0.113:8001/1:0:1:508F:6:70:1680000:0:0:0:" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Jim-Jam-$(date).ts"
+}
+
+
+################################################################################
+
+vu-make-upload-script() {
+	local n=3
+	[[ $# == 1 ]] && n=$1
+	echo "echo ===================== >> addr.txt"
+	echo "date >> addr.txt"
+	ls -r *.ts | head -n $n | while read ff
+	do
+		echo "curl --upload-file \"$ff\" https://transfer.sh/ >> addr.txt"
+	done
+	echo "date >> addr.txt"
+	echo "echo >> addr.txt"
+}
