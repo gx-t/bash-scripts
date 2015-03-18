@@ -81,10 +81,19 @@ radio-download-polskastancia() {
 }
 
 radio-download-metal-only() {
-  pushd .
-  _radio-goto-dir
-  streamripper http://80.237.225.70:9480 -q -a radio
-  popd
+  streamripper http://80.237.225.70:9480 -codeset-id3=CP1252 -q -A -a metal-only
+}
+
+radio-download-radio1() {
+	streamripper http://91.121.7.49:8000 -codeset-id3=CP1252 -q -A -a rock-radio1
+}
+
+radio-download-rockradio.com-black-metal() {
+	streamripper http://pub7.rockradio.com/rr_blackmetal -codeset-id3=CP1252 -q -A -a rock-radio-black-metal
+}
+
+radio-download-rockradio.com-symphometal() {
+	streamripper http://pub7.rockradio.com/rr_symphonicmetal q -A -a rock-radio-symphonic-metal
 }
 
 #get-words։ քաշում է $1 հասցեից $2 սկսվող բառերի ցուցակը
@@ -180,7 +189,10 @@ vu-download() {
 }
 
 transfer() {
-  avconv -i "$1" -f matroska -s 1280x720 - | curl -v --upload-file - "https://transfer.sh/$2" >> /tmp/addr.txt
+	echo ">>>    $(date)"
+	avconv -i "$1" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -f matroska -s 1280x720 - |
+	curl -v --upload-file - "https://transfer.sh/$2"
+	echo "<<<    $(date)"
 }
 
 camera-jpegs-to-ts() {
@@ -201,7 +213,7 @@ camera-jpegs-to-ts() {
 camera-mp4-to-single-mkv() {
   local src=/media/shah/disk/DCIM/*/*.MP4
   local size="1280x720"
-  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -f avi -; done | avconv -i - "$(date).mkv"
+  ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -r 30 -f avi -; done | avconv -i - "$(date).mkv"
 #  ls -tr $src | while read ff; do avconv -i "$ff" -vcodec rawvideo -r 120 -f avi -; done | avconv -i - "$(date).mkv"
 }
 
@@ -216,8 +228,9 @@ vu-download-recorded-script() {
 
 vu-nfs-recorded-script() {
 	local line
-	local i=0
-	ls -r ../*.ts | while read line
+	local n=3
+	[[ $# == 1 ]] && n=$1
+	ls -r ../*.ts | head -n $n | while read line
 	do
 		local sflag=""
 		[[ "$line" =~ .+" HD ".+ ]] && sflag=" -s 1280x720"
