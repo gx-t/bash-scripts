@@ -73,27 +73,38 @@ radio-download-pirate-radio() {
 }
 
 radio-download-polskastancia() {
-  pushd .
-  _radio-goto-dir
-#  streamripper http://91.121.249.18:80 -a radio
-  streamripper http://91.121.103.183:6200 -q
-  popd
+	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
+	echo "waiting $1 seconds..." &&
+	sleep $1 &&
+	streamripper http://91.121.103.183:6200 -l $2 -q -A -a polskastancia
 }
 
 radio-download-metal-only() {
-  streamripper http://80.237.225.70:9480 -codeset-id3=CP1252 -q -A -a metal-only
+	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
+	echo "waiting $1 seconds..." &&
+	sleep $1 &&
+	streamripper http://80.237.225.70:9480 -l $2 -q -A -a metal-only
 }
 
 radio-download-radio1() {
-	streamripper http://91.121.7.49:8000 -codeset-id3=CP1252 -q -A -a rock-radio1
+	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
+	echo "waiting $1 seconds..." &&
+	sleep $1 &&
+	streamripper http://91.121.7.49:8000 -l $2 -q -A -a rock-radio1
 }
 
 radio-download-rockradio.com-black-metal() {
-	streamripper http://pub7.rockradio.com/rr_blackmetal -codeset-id3=CP1252 -q -A -a rock-radio-black-metal
+	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
+	echo "waiting $1 seconds..." &&
+	sleep $1 &&
+	streamripper http://pub7.rockradio.com/rr_blackmetal -l $2 -q -A -a rock-radio-black-metal
 }
 
 radio-download-rockradio.com-symphometal() {
-	streamripper http://pub7.rockradio.com/rr_symphonicmetal q -A -a rock-radio-symphonic-metal
+	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
+	echo "waiting $1 seconds..." &&
+	sleep $1 &&
+	streamripper http://pub7.rockradio.com/rr_symphonicmetal -l $2 -q -A -a rock-radio-symphonic-metal
 }
 
 #get-words։ քաշում է $1 հասցեից $2 սկսվող բառերի ցուցակը
