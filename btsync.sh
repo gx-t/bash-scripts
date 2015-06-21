@@ -104,7 +104,7 @@ radio-download-rockradio.com-symphometal() {
 	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
 	echo "waiting $1 seconds..." &&
 	sleep $1 &&
-	streamripper http://pub7.rockradio.com/rr_symphonicmetal -l $2 -q -A -a rock-radio-symphonic-metal
+	streamripper http://pub7.rockradio.com/rr_symphonicmetal -l $2 -q rock-radio-symphonic-metal
 }
 
 #get-words։ քաշում է $1 հասցեից $2 սկսվող բառերի ցուցակը
@@ -199,11 +199,18 @@ vu-download() {
   kill -SIGINT $resp
 }
 
-transfer() {
-	echo ">>>    $(date)"
+transfer_hd() {
+	echo "$(date)===="
 	avconv -i "$1" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -f matroska -s 1280x720 - |
 	curl -v --upload-file - "https://transfer.sh/$2"
-	echo "<<<    $(date)"
+	echo "====$(date)"
+}
+
+transfer_sd() {
+	echo "$(date)===="
+	avconv -i "$1" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -f matroska - |
+	curl -v --upload-file - "https://transfer.sh/$2"
+	echo "===$(date)"
 }
 
 camera-jpegs-to-ts() {
@@ -249,37 +256,9 @@ vu-nfs-recorded-script() {
 	done
 }
 
-vu-get-epg-all() {
-	local vuurl=http://192.168.0.113
-	local line
-	local title
-	local descr
-	local id
-	local sref
-	local time
-	local svcname
-	local length
-	dbfile="/tmp/vu-epg.db"
-	rm -f "$dbfile"
-	(echo "create table epgall (id INTEGER PRIMARY KEY,svcname TEXT, title TEXT, descr TEXT, length TEXT, time TIMESTAMP, sref TEXT);
-begin transaction;"
-	curl -s "$vuurl/web/getallservices" |  while read line
-	do
-		[[ "$line" =~ ^\<e2servicereference\>(.+)\<\/e2servicereference\>$ ]] &&
-		curl -s "$vuurl/web/epgservice?sRef=${BASH_REMATCH[1]}" | tr \" \' | while read line
-		do
-			[[ "$line" == \<e2event\> ]] && title="" && descr="" && id="" && sref="" && date="" && svcname="" && length=0 && continue
-			[[ "$line" =~ ^\<e2eventtitle\>(.+)\<\/e2eventtitle\>$ ]] && title="${BASH_REMATCH[1]}" && continue
-			[[ "$line" =~ ^\<e2eventservicename\>(.+)\<\/e2eventservicename\>$ ]] && svcname="${BASH_REMATCH[1]}" && continue
-			[[ "$line" =~ ^\<e2eventdescription\>(.+)\<\/e2eventdescription\>$ ]] && descr="${BASH_REMATCH[1]}" && continue
-			[[ "$line" =~ ^\<e2eventstart\>(.+)\<\/e2eventstart\>$ ]] && time=$(date -d "@${BASH_REMATCH[1]}" +%Y-%m-%d\ %H:%M:%S) && continue
-			[[ "$line" =~ ^\<e2eventduration\>(.+)\<\/e2eventduration\>$ ]] && length="${BASH_REMATCH[1]}" && continue
-
-			[[ "$line" =~ ^\<e2eventid\>(.+)\<\/e2eventid\>$ ]] && id="${BASH_REMATCH[1]}" && continue
-			[[ "$line" =~ ^\<e2eventservicereference\>(.+)\<\/e2eventservicereference\>$ ]] && sref="${BASH_REMATCH[1]}" && continue
-			[[ "$line" == \<\/e2event\> ]] && echo "insert into epgall (svcname,title,descr,length,time,sref) values (\"$svcname\",\"$title\",\"$descr\",\"$length\",\"$time\",\"$sref\");" && continue
-		done
-	done; echo "end transaction;") | sqlite3 "$dbfile"
+vu-sql-update() {
+	echo "pragma foreign_keys = on;"
+	curl -s http://192.168.0.113/web/getallservices | xsltproc ~/btsync/vu.xsl -
 }
 
 vu-movie-list-upload() {
@@ -342,23 +321,27 @@ vu-discovery-hd() {
 }
 
 vu-kino-hd() {
-	avconv -i "http://192.168.0.113:8001/1:0:19:2F45:C:70:1680000:0:0:0:" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -y "Kino-HD-$(date).ts"
+	avconv -i "http://192.168.0.113:8001/1:0:19:2F45:C:70:1680000:0:0:0:" -t "00:30:00" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -y "Kino-HD-$(date).ts"
 }
 
 vu-amedia-hd() {
-	avconv -i "http://192.168.0.113:8001/1:0:19:6593:9:70:1680000:0:0:0:" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Amedia-HD-$(date).ts"
+	avconv -i "http://192.168.0.113:8001/1:0:19:6593:9:70:1680000:0:0:0:" -t "00:30:00" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Amedia-HD-$(date).mkv"
 }
 
 vu-ng-hd() {
-	avconv -i "http://192.168.0.113:8001/1:0:19:6592:9:70:1680000:0:0:0:" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "NG-HD-$(date).ts"
+	avconv -i "http://192.168.0.113:8001/1:0:19:6592:9:70:1680000:0:0:0:" -t "00:30:00" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "NG-HD-$(date).mkv"
 }
 
 vu-discovery-science() {
-	avconv -i "http://192.168.0.113:8001/1:0:1:5088:6:70:1680000:0:0:0:" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Discovery-Science-$(date).ts"
+	avconv -i "http://192.168.0.113:8001/1:0:1:5088:6:70:1680000:0:0:0:" -t "00:30:00" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Discovery-Science-$(date).mkv"
 }
 
 vu-jim-jam() {
-	avconv -i "http://192.168.0.113:8001/1:0:1:508F:6:70:1680000:0:0:0:" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Jim-Jam-$(date).ts"
+	avconv -i "http://192.168.0.113:8001/1:0:1:508F:6:70:1680000:0:0:0:" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "Jim-Jam-$(date).mkv"
+}
+
+vu-evro() {
+	avconv -i "http://192.168.0.113:8001/1:0:1:2A36:8:70:1680000:0:0:0:" -t "00:30:00" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -y "Evro-kino-$(date).mkv"
 }
 
 
