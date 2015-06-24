@@ -1,0 +1,19 @@
+create table names (id integer primary key, name text, price integer, time timestamp, comment text, unique(name));
+insert into names (name, price, time, comment) values ("Գուգուշ-1", 10000, "1433966165", "Առաջին փորձնական աշակերտն է սա");
+insert into names (name, price, time, comment) values ("Գուգուշ-2", 11000, "1433966170", "Երկրորդ փորձնական աշակերտն է սա");
+create table actions (id integer primary key, name text, value integer, time timestamp, comment text);
+insert into actions (name, value, time) values ("Գուգուշ֊1", "-2500", 1433966190);
+select datetime(time, "unixepoch", "localtime") from actions;
+select sum(value) from actions;
+
+pragma foreign_keys = on;
+create table names (id integer primary key, name text, price integer, time timestamp, comment text, unique(name));
+create table actions (id integer primary key, name text, value integer, time timestamp, comment text, foreign key(name) references names(name) on delete cascade on update cascade);
+update names set name="ccc" where name="aaa";
+select comment from names where name=(select name from actions where id=7);
+select comment from names where name in (select name from actions where id between 4 and 7);
+!!! select names.comment from names, actions where actions.name=names.name;
+select comment from names where name=(select name from actions where id=4);
+select count(age) as "Գումարային տարիքը" from test;
+select next.id,next.value - actions.value from actions inner join actions as next on next.id=actions.id + 1;
+
