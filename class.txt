@@ -16,4 +16,4 @@ select comment from names where name in (select name from actions where id betwe
 select comment from names where name=(select name from actions where id=4);
 select count(age) as "Գումարային տարիքը" from test;
 select next.id,next.value - actions.value from actions inner join actions as next on next.id=actions.id + 1;
-
+insert into test values(CURRENT_TIMESTAMP);

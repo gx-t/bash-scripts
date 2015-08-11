@@ -83,7 +83,7 @@ radio-download-metal-only() {
 	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
 	echo "waiting $1 seconds..." &&
 	sleep $1 &&
-	streamripper http://80.237.225.70:9480 -l $2 -q -A -a metal-only
+	streamripper http://80.237.225.70:9480 -l $2 -q  metal-only
 }
 
 radio-download-radio1() {
@@ -104,7 +104,7 @@ radio-download-rockradio.com-symphometal() {
 	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
 	echo "waiting $1 seconds..." &&
 	sleep $1 &&
-	streamripper http://pub7.rockradio.com/rr_symphonicmetal -l $2 -q rock-radio-symphonic-metal
+	streamripper http://pub7.rockradio.com/rr_symphonicmetal -l $2 -q -A -a rock-radio-symphonic-metal
 }
 
 #get-words։ քաշում է $1 հասցեից $2 սկսվող բառերի ցուցակը
@@ -216,7 +216,8 @@ transfer_sd() {
 camera-jpegs-to-ts() {
   local src=/media/shah/disk/DCIM/*/*.JPG
   local out="$(date).ts"
-  local size="1600x1200"
+#  local size="1600x1200"
+  local size="1280x960"
   local tmpdir=$(mktemp)
   rm $tmpdir
   mkdir $tmpdir || return
@@ -359,3 +360,22 @@ vu-make-upload-script() {
 	echo "date >> addr.txt"
 	echo "echo >> addr.txt"
 }
+
+ip_register() {
+	while sleep 1200
+	do
+		curl http://shah32768.sdf.org/cgi-bin/regip.cgi
+	done
+}
+
+power_log() {
+	local ff='/sys/class/power_supply/AC/online'
+	local old=`cat $ff`
+	while sleep 3
+	do
+		local new=`cat $ff`
+		[[ $new != $old ]] && echo "$(date) === $old => $new"
+		old=$new
+	done
+}
+
