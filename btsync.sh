@@ -364,7 +364,7 @@ vu-make-upload-script() {
 ip_register() {
 	while sleep 1200
 	do
-		curl http://shah32768.sdf.org/cgi-bin/regip.cgi
+		curl http://shah32768.sdf.org/cgi-bin/regip.cgi?Home
 	done
 }
 
