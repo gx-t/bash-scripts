@@ -83,7 +83,7 @@ radio-download-metal-only() {
 	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
 	echo "waiting $1 seconds..." &&
 	sleep $1 &&
-	streamripper http://80.237.225.70:9480 -l $2 -q  metal-only
+	streamripper http://80.237.225.70:9480 -l $2 -q  -A -a metal-only
 }
 
 radio-download-radio1() {
@@ -362,9 +362,11 @@ vu-make-upload-script() {
 }
 
 ip_register() {
+	cmd='curl http://shah32768.sdf.org/cgi-bin/regip.cgi?Home'
+	$cmd
 	while sleep 1200
 	do
-		curl http://shah32768.sdf.org/cgi-bin/regip.cgi?Home
+		$cmd
 	done
 }
 
@@ -374,7 +376,9 @@ power_log() {
 	while sleep 3
 	do
 		local new=`cat $ff`
-		[[ $new != $old ]] && echo "$(date) === $old => $new"
+		[[ $new != $old ]] &&
+		echo -e -n "f925c297-7d91-4c17-8678-e2c9d160a8eb\ninsert into event_log values(\"power\", \"$old => $new\", CURRENT_TIMESTAMP);\n" |
+		curl --upload-file - "http://shah32768.sdf.org/cgi-bin/regevent.cgi"
 		old=$new
 	done
 }
