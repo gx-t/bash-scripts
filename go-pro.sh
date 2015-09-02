@@ -11,3 +11,27 @@ fix-fisheye() {
 	done
 }
 
+
+jpegs-to-ts() {
+	local src=/media/$USER/*/DCIM/*/GOPR[0-9][0-9][0-9][0-9].JPG
+	local out="$(date).ts"
+#	local size="1600x1200"
+	local size="1280x960"
+	local tmpdir=$(mktemp)
+	mkdir $tmpdir || return
+	i=0
+	echo "Creating input files links..."
+	ls $src | while read ff; do ln -sf "$ff" "$tmpdir/$(printf '%08d.jpeg' $i)"; (( i ++ )); done
+	echo "Converting to movie..."
+	avconv -i "$tmpdir/%08d.jpeg" -s "$size" -c:v libx264 "$out"
+	rm -rf "$tmpdir"
+}
+
+
+mp4s-to-single() {
+	local src=/media/$USER/*/DCIM/*/GOPR[0-9][0-9][0-9][0-9].MP4
+	local size="1280x720"
+#	local rate=120
+	local rate=30
+	ls -tr $src | while read ff; do avconv -i "$ff" -s "$size" -vcodec rawvideo -r $rate -f avi -; done | avconv -i - "$(date).mkv"
+}
