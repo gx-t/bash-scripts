@@ -59,54 +59,6 @@ file-text-subst () {
   find . -name $1 -exec sed -i 's,'"$2"','"$3"',' {} \;
 }
 
-_radio-goto-dir() {
-  xx=~/Downloads/radio/$(date)
-  mkdir -p "$xx"
-  cd "$xx"
-}
-
-radio-download-pirate-radio() {
-  pushd .
-  _radio-goto-dir
-  streamripper http://174.127.65.10:80 -q -a radio
-  popd
-}
-
-radio-download-polskastancia() {
-	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
-	echo "waiting $1 seconds..." &&
-	sleep $1 &&
-	streamripper http://91.121.103.183:6200 -l $2 -q -A -a polskastancia
-}
-
-radio-download-metal-only() {
-	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
-	echo "waiting $1 seconds..." &&
-	sleep $1 &&
-	streamripper http://80.237.225.70:9480 -l $2 -q  -A -a metal-only
-}
-
-radio-download-radio1() {
-	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
-	echo "waiting $1 seconds..." &&
-	sleep $1 &&
-	streamripper http://91.121.7.49:8000 -l $2 -q -A -a rock-radio1
-}
-
-radio-download-rockradio.com-black-metal() {
-	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
-	echo "waiting $1 seconds..." &&
-	sleep $1 &&
-	streamripper http://pub7.rockradio.com/rr_blackmetal -l $2 -q -A -a rock-radio-black-metal
-}
-
-radio-download-rockradio.com-symphometal() {
-	(( $# != 2 )) && echo "Usage: $FUNCNAME delay duration" && return
-	echo "waiting $1 seconds..." &&
-	sleep $1 &&
-	streamripper http://pub7.rockradio.com/rr_symphonicmetal -l $2 -q -A -a rock-radio-symphonic-metal
-}
-
 #get-words։ քաշում է $1 հասցեից $2 սկսվող բառերի ցուցակը
 get-words () {
   echo "[$2]"
