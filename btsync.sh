@@ -254,14 +254,6 @@ table, th, td {
 " ) | gzip | curl --upload-file - "http://shah32768.sdf.org/cgi-bin/vu-upload.cgi?33462e45-2031-4dab-a821-1e7cac6a7d3d" 
 }
 
-vu-download-hd() {
-  avconv -i "$1" -s 1280x720 -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "$2"
-}
-
-vu-download-sd() {
-  avconv -i "$1" -map 0:0 -c:v libx264 -map 0:1 -c:a copy -map 0:2 -c:a copy -y "$2"
-}
-
 
 ################################################################################
 vu-power-status() {
@@ -299,19 +291,6 @@ vu-evro() {
 
 
 ################################################################################
-
-vu-make-upload-script() {
-	local n=3
-	[[ $# == 1 ]] && n=$1
-	echo "echo ===================== >> addr.txt"
-	echo "date >> addr.txt"
-	ls -r *.ts | head -n $n | while read ff
-	do
-		echo "curl --upload-file \"$ff\" https://transfer.sh/ >> addr.txt"
-	done
-	echo "date >> addr.txt"
-	echo "echo >> addr.txt"
-}
 
 ip_register() {
 	cmd='curl http://shah32768.sdf.org/cgi-bin/regip.cgi?Home'
