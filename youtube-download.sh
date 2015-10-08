@@ -6,5 +6,5 @@ youtube-dl -c -l $url | while read line
 do
 	echo "# $line"
 done |
-zenity --progress   --title="Folder music review..."   --text=""   --pulsate --auto-kill
+zenity --progress   --title="Բեռնում youyube -ից..."   --text=""   --pulsate --auto-kill
 
