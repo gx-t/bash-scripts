@@ -13,11 +13,12 @@ fix-fisheye() {
 
 
 jpegs-to-ts() {
-	local src=/media/$USER/*/DCIM/*/GOPR[0-9][0-9][0-9][0-9].JPG
+	local src=/media/$USER/*/DCIM/*/G*[0-9][0-9][0-9][0-9].JPG
 	local out="$(date).ts"
 #	local size="1600x1200"
 	local size="1280x960"
 	local tmpdir=$(mktemp)
+	rm -rf $tmpdir
 	mkdir $tmpdir || return
 	i=0
 	echo "Creating input files links..."
