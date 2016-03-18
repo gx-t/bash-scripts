@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 src=/mnt/vu/*.ts
 [[ $# != 1 ]] && echo "Usage: $0 <file count>" && exit 1
 ls -t $src | head -n $1  | while read ff
