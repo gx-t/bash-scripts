@@ -19,8 +19,9 @@ bs-stop() {
 }
 
 time_to() {
-  dt=$(expr $(date -d $1 +%s) - $(date +%s))
-  echo "if($dt<0) $dt+(24*3600) else $dt" | bc
+  ((dt = `date -d $1 +%s` - `date +%s`))
+  (($dt < 0)) && ((dt = $dt + 24 * 3600))
+  echo $dt
 }
 
 bs-night() {
