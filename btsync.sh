@@ -42,11 +42,7 @@ tr-night() {
   echo $(date)
   echo "Waiting for night time to start transmission-gtk..."
   sleep $(time_to "02:00")
-  transmission-gtk &
-#  get-rates
-  echo "Waiting for morning to kill transmission-gtk..."
-  sleep $(time_to "08:00")
-  killall transmission-gtk
+  timeout $(time_to "08:00") transmission-gtk
 }
 
 3g-monitor() {
