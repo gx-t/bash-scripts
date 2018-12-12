@@ -18,6 +18,7 @@ convert-csvs-to-sqlite() {
     echo "drop table if exists voters;"
     echo "create table voters (lname text, name text, fname text, birthdate text, region text, town text, village text, address text, area text, section text, note text);"
 
+    echo ".mode csv"
     echo "begin transaction;" 
     for ff in *.csv
     do
